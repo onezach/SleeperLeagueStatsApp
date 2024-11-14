@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import Init from "./components/init";
+import Hub from "./components/hub";
+
+import { useState } from "react";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [leagueID, setLeagueID] = useState("");
+  const [status, setStatus] = useState("init");
+
+  const advance = (id) => {
+    setLeagueID(id);
+    setStatus("active");
+  }
+
+  if (status === "init") {
+    return <Init advance={advance}/>;
+  } else {
+    return <Hub leagueID={leagueID} />
+  }
 }
 
 export default App;
