@@ -1,0 +1,14 @@
+.Hub {
+    display: flex;
+    flex: 1;
+    background-color: #1d3966;
+    color: white;
+    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.Hub-league-avatar {
+    width: 20vw;
+}

@@ -1,3 +1,5 @@
+import "./App.scss";
+
 import Init from "./components/init";
 import Hub from "./components/hub";
 

@@ -18,7 +18,7 @@ function Init(props) {
   };
 
   return (
-    <div>
+    <div className="Hub">
       <input
         id="league_id_input"
         name="league_id_input"
