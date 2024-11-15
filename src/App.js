@@ -1,4 +1,4 @@
-import "./App.scss";
+import "./App.css";
 
 import Init from "./components/init";
 import Hub from "./components/hub";
@@ -14,11 +14,16 @@ function App() {
     setStatus("active");
   }
 
-  if (status === "init") {
-    return <Init advance={advance}/>;
-  } else {
-    return <Hub leagueID={leagueID} />
+  const screen = () => {
+    if (status === "init") {
+      return <Init advance={advance}/>;
+    } else {
+      return <Hub leagueID={leagueID} />
+    }
   }
+
+  return <div className="Backdrop">{screen()}</div>
+  
 }
 
 export default App;

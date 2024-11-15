@@ -1,0 +1,52 @@
+.Backdrop {
+  display: flex;
+  background-color: #1d3966;
+  height: 100vh;
+  width: 100vw;
+}
+
+.Init-container {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.Init {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(60, 60, 60);
+  color: white;
+  border-radius: 15px;
+  border: 2px solid black;
+  width: 40vw;
+  height: 50vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.Init-title {
+  margin: 10px;
+}
+
+.Init-input-container {
+  margin: 10px;
+}
+
+.Init-error {
+  color: red;
+}
+
+.Init-button {
+  margin: 10px;
+}
+
+.Hub {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid red;
+}
+
+.Hub-league-avatar {
+  width: 20vw;
+}
