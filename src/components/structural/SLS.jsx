@@ -13,8 +13,6 @@ export default function SLS() {
 
   const LIDref = useRef();
 
-  const prefix = "https://api.sleeper.app/v1/league/";
-
   const reset = () => {
     setData({ league: {}, matchups: {}, teams: {} });
     setDataInitialized(false);
@@ -23,7 +21,7 @@ export default function SLS() {
   const handleConnect = async () => {
     const LID = LIDref.current.value;
 
-    const r1 = await fetch(prefix + LID);
+    const r1 = await fetch("https://api.sleeper.app/v1/league/" + LID);
     if (r1.status === 404) {
       console.log("invalid");
       return;
@@ -31,17 +29,17 @@ export default function SLS() {
 
     setLoading(true);
     const leagueData = await r1.json();
-    const prefix_extended = prefix + LID + "/";
+    const prefix = "https://api.sleeper.app/v1/league/" + LID + "/";
     const weeks = leagueData.settings.leg;
     const matchups = {};
 
     for (let i = 1; i <= weeks; i++) {
-      const r2 = await fetch(prefix_extended + "matchups/" + i);
+      const r2 = await fetch(prefix + "matchups/" + i);
       const thisWeekMatches = await r2.json();
       matchups[i] = thisWeekMatches;
     }
 
-    const r3 = await fetch(prefix_extended + "users");
+    const r3 = await fetch(prefix + "users");
     const users = await r3.json();
     const usersByID = {};
 
@@ -49,7 +47,7 @@ export default function SLS() {
       usersByID[users[i].user_id] = users[i];
     }
 
-    const r4 = await fetch(prefix_extended + "rosters");
+    const r4 = await fetch(prefix + "rosters");
     const rosters = await r4.json();
     const teams = {};
 
@@ -68,12 +66,10 @@ export default function SLS() {
   return (
     <div>
       {dataInitialized ? (
-        <div>
           <SLSContext.Provider value={[data, reset]}>
             <SLSNavbar />
             <Outlet />
           </SLSContext.Provider>
-        </div>
       ) : (
         <Container>
           <Form>
