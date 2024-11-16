@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Outlet } from "react-router-dom";
-import { Form, Button, Alert, Container } from "react-bootstrap";
+import { Form, Button, Alert, Container, Row } from "react-bootstrap";
 
 import SLSNavbar from "./SLSNavbar";
 import SLSContext from "../../context/SLSContext";
@@ -64,33 +64,42 @@ export default function SLS() {
   };
 
   return (
-    <div>
+    <>
       {dataInitialized ? (
-          <SLSContext.Provider value={[data, reset]}>
-            <SLSNavbar />
-            <Outlet />
-          </SLSContext.Provider>
+        <SLSContext.Provider value={[data, reset]}>
+          <SLSNavbar />
+          <Outlet />
+        </SLSContext.Provider>
       ) : (
-        <Container>
-          <Form>
-            <Form.Control
-              type="text"
-              ref={LIDref}
-              placeholder="Enter your Sleeper League ID"
-            />
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <Button
-                variant="primary"
-                onClick={handleConnect}
-                className="mt-3"
-              >
-                Login
-              </Button>
+        <div style={{ margin: "1rem" }}>
+          <Container>
+            <h1>Sleeper League Stats</h1>
+
+            <Form>
+              <Form.Control
+                type="text"
+                ref={LIDref}
+                placeholder="Enter your Sleeper League ID"
+              />
+            </Form>
+
+            <div
+              style={{
+                marginTop: "0.5rem",
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              <div style={{ marginRight: "0.5rem" }}>
+                <Button variant="primary" onClick={handleConnect}>
+                  Login
+                </Button>
+              </div>
               {loading && <div className="spinner-border" role="status" />}
             </div>
-          </Form>
-        </Container>
+          </Container>
+        </div>
       )}
-    </div>
+    </>
   );
 }
