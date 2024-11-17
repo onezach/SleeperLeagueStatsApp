@@ -26,8 +26,8 @@ export default function SLS() {
     const LID = LIDref.current.value;
 
     if (LID.length === 0) {
-        setAlertMessage("Invalid League ID");
-        return
+      setAlertMessage("Invalid League ID");
+      return;
     }
 
     const r1 = await fetch("https://api.sleeper.app/v1/league/" + LID);

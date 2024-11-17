@@ -39,17 +39,27 @@ export default function Homepage() {
     }
     teams.sort(rankTeams);
     setStandings(teams);
-  }, [data.league.total_rosters, data.teams])
+  }, [data.league.total_rosters, data.teams]);
 
   return (
     <Container>
       <h1>Overview</h1>
       <Row style={{ margin: "0.2rem" }}>
-        <Col xs={1}><b>Rank</b></Col>
-        <Col xs={3}><b>Team</b></Col>
-        <Col xs={1}><b>Record</b></Col>
-        <Col xs={2}><b>Points For</b></Col>
-        <Col xs={2}><b>Max Points For</b></Col>
+        <Col xs={1}>
+          <b>Rank</b>
+        </Col>
+        <Col xs={3}>
+          <b>Team</b>
+        </Col>
+        <Col xs={1}>
+          <b>Record</b>
+        </Col>
+        <Col xs={2}>
+          <b>Points For</b>
+        </Col>
+        <Col xs={2}>
+          <b>Max Points For</b>
+        </Col>
       </Row>
       {standings.map((team, rank) => (
         <Row key={team.name} style={{ margin: "0.2rem" }}>

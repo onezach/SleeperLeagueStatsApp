@@ -10,18 +10,23 @@ export default function SLSNavbar() {
   return (
     <Navbar bg="dark" variant="dark">
       <Navbar.Brand style={{ margin: "0.5rem" }} as={Link} to="/">
-          <img
-            alt="League Logo"
-            src={"https://sleepercdn.com/avatars/thumbs/" + data.league.avatar}
-            width="30"
-            height="30"
-          />{" "}
-          {data.league.name}
-        </Navbar.Brand>
+        <img
+          alt="League Logo"
+          src={"https://sleepercdn.com/avatars/thumbs/" + data.league.avatar}
+          width="30"
+          height="30"
+        />{" "}
+        {data.league.name}
+      </Navbar.Brand>
       <Nav variant="pills">
-        <Nav.Link as={Link} to="/head2head">Head to Head</Nav.Link>
+        <Nav.Link as={Link} to="/head2head">
+          Head to Head
+        </Nav.Link>
       </Nav>
-      <Navbar.Collapse className="justify-content-end" style={{ margin: "0.5rem" }}>
+      <Navbar.Collapse
+        className="justify-content-end"
+        style={{ margin: "0.5rem" }}
+      >
         <Button type="reset" onClick={reset}>
           Reset
         </Button>
