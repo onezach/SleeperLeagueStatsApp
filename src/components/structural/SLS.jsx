@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Outlet } from "react-router-dom";
-import { Form, Button, Alert, Container, Row } from "react-bootstrap";
+import { Form, Button, Alert, Container, Stack } from "react-bootstrap";
 
 import SLSNavbar from "./SLSNavbar";
 import SLSContext from "../../context/SLSContext";
@@ -12,21 +12,32 @@ export default function SLS() {
   const [loading, setLoading] = useState(false);
 
   const LIDref = useRef();
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("danger");
 
   const reset = () => {
     setData({ league: {}, matchups: {}, teams: {} });
     setDataInitialized(false);
+    setAlertMessage("");
+    setAlertVariant("danger");
   };
 
   const handleConnect = async () => {
     const LID = LIDref.current.value;
 
+    if (LID.length === 0) {
+        setAlertMessage("Invalid League ID");
+        return
+    }
+
     const r1 = await fetch("https://api.sleeper.app/v1/league/" + LID);
     if (r1.status === 404) {
-      console.log("invalid");
+      setAlertMessage("Invalid League ID");
       return;
     }
 
+    setAlertVariant("success");
+    setAlertMessage("");
     setLoading(true);
     const leagueData = await r1.json();
     const prefix = "https://api.sleeper.app/v1/league/" + LID + "/";
@@ -43,7 +54,7 @@ export default function SLS() {
     const users = await r3.json();
     const usersByID = {};
 
-    for (let i = 0; i < users.length; i++) {
+    for (let i = 0; i < leagueData.total_rosters; i++) {
       usersByID[users[i].user_id] = users[i];
     }
 
@@ -51,13 +62,21 @@ export default function SLS() {
     const rosters = await r4.json();
     const teams = {};
 
-    for (let i = 0; i < rosters.length; i++) {
+    for (let i = 0; i < leagueData.total_rosters; i++) {
       teams[rosters[i].roster_id] = {
         ...rosters[i],
-        avatar: usersByID[rosters[i].owner_id].avatar,
-        name: usersByID[rosters[i].owner_id].display_name,
+        avatar: usersByID[rosters[i].owner_id].metadata.avatar
+          ? usersByID[rosters[i].owner_id].metadata.avatar
+          : usersByID[rosters[i].owner_id].avatar,
+        custom_avatar: usersByID[rosters[i].owner_id].metadata.avatar
+          ? true
+          : false,
+        name: usersByID[rosters[i].owner_id].metadata.team_name
+          ? usersByID[rosters[i].owner_id].metadata.team_name
+          : usersByID[rosters[i].owner_id].display_name,
       };
     }
+
     setLoading(false);
     setData({ league: leagueData, matchups: matchups, teams: teams });
     setDataInitialized(true);
@@ -73,30 +92,28 @@ export default function SLS() {
       ) : (
         <div style={{ margin: "1rem" }}>
           <Container>
-            <h1>Sleeper League Stats</h1>
+            <Stack gap={3}>
+              <h1>Sleeper League Stats</h1>
 
-            <Form>
-              <Form.Control
-                type="text"
-                ref={LIDref}
-                placeholder="Enter your Sleeper League ID"
-              />
-            </Form>
+              <Form>
+                <Form.Control
+                  type="text"
+                  ref={LIDref}
+                  placeholder="Enter your Sleeper League ID"
+                />
+              </Form>
 
-            <div
-              style={{
-                marginTop: "0.5rem",
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <div style={{ marginRight: "0.5rem" }}>
+              {alertMessage && (
+                <Alert variant={alertVariant}>{alertMessage}</Alert>
+              )}
+
+              <Stack direction="horizontal" gap={3}>
                 <Button variant="primary" onClick={handleConnect}>
                   Login
                 </Button>
-              </div>
-              {loading && <div className="spinner-border" role="status" />}
-            </div>
+                {loading && <div className="spinner-border" role="status" />}
+              </Stack>
+            </Stack>
           </Container>
         </div>
       )}
