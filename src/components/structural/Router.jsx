@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import SLS from "./SLS";
 import Homepage from "../pages/Homepage";
-import H2H from "../pages/Head2Head";
+import PowerRankings from "../pages/PowerRankings";
 
 export default function Router() {
   return (
@@ -10,7 +10,7 @@ export default function Router() {
       <Routes>
         <Route path="/" element={<SLS />}>
           <Route index element={<Homepage />} />
-          <Route path="/head2head" element={<H2H />} />
+          <Route path="/powerrankings" element={<PowerRankings />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -19,8 +19,8 @@ export default function SLSNavbar() {
         {data.league.name}
       </Navbar.Brand>
       <Nav variant="pills">
-        <Nav.Link as={Link} to="/head2head">
-          Head to Head
+        <Nav.Link as={Link} to="/powerrankings">
+          Power Rankings
         </Nav.Link>
       </Nav>
       <Navbar.Collapse
