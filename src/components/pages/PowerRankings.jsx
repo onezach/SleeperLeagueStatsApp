@@ -9,10 +9,10 @@ export default function PowerRankings() {
 
   const [powerRanks, setPowerRanks] = useState([]);
   const [powerRankSliders, setPowerRankSliders] = useState({
-    four_week_avg: 10,
-    max_points_for: 10,
-    win_pct: 5,
-    efficiency: 8,
+    four_week_avg: 9,
+    max_points_for: 9,
+    win_pct: 6,
+    efficiency: 7,
   });
   const [powerRankData, setPowerRankData] = useState({ data: [] });
 
@@ -55,9 +55,15 @@ export default function PowerRankings() {
           data.league.settings.last_scored_leg
         ).toFixed(2),
         max_points_for: max_points_for,
-        points_for:
-          data.teams[tidx + 1].settings.fpts +
-          data.teams[tidx + 1].settings.fpts_decimal / 100,
+        // points_for:
+        //   data.teams[tidx + 1].settings.fpts +
+        //   data.teams[tidx + 1].settings.fpts_decimal / 100,
+        wins: data.teams[tidx + 1].settings.wins,
+        losses: data.teams[tidx + 1].settings.losses,
+        efficiency:
+          (data.teams[tidx + 1].settings.fpts +
+            data.teams[tidx + 1].settings.fpts_decimal / 100) /
+          max_points_for,
       };
     });
     // .sort((t1, t2) => t2.val - t1.val);
@@ -93,14 +99,14 @@ export default function PowerRankings() {
         const max_points_for_norm =
           (team.max_points_for - powerRankData.min_mpf) /
           powerRankData.mpf_diff;
-        const efficiency = team.points_for / team.max_points_for;
+        // const efficiency = team.points_for / team.max_points_for;
         return {
           name: team.name,
           score: (
             four_week_average_norm * powerRankSliders.four_week_avg +
             max_points_for_norm * powerRankSliders.max_points_for +
             team.win_pct * powerRankSliders.win_pct +
-            efficiency * powerRankSliders.efficiency
+            team.efficiency * powerRankSliders.efficiency
           ).toFixed(2),
         };
       })
@@ -138,17 +144,14 @@ export default function PowerRankings() {
   return (
     <Container>
       <div style={{ margin: "1rem" }}>
-        {powerRanks.map((team, tidx) => (
-          <div key={"team_" + tidx}>
-            {tidx + 1}
-            {") "}
-            {team.name}
-            {": "}
-            {team.score}
-          </div>
-        ))}
+        <h1>Power Rankings</h1>
+        <p>
+          Adjust the sliders according to your weight preferences for different
+          criteria.
+        </p>
       </div>
-      <Form>
+
+      <Form style={{ margin: "1rem" }}>
         <Form.Group as={Row}>
           <Col xs={3}>
             <div>Four-Week Average</div>
@@ -196,6 +199,67 @@ export default function PowerRankings() {
           </Col>
         </Form.Group>
       </Form>
+      <div style={{ margin: "1rem" }}>
+        <h2>Rankings</h2>
+        {powerRanks.map((team, tidx) => (
+          <div key={"team_" + tidx}>
+            {tidx + 1}
+            {") "}
+            {team.name}
+            {": "}
+            {team.score}
+          </div>
+        ))}
+      </div>
+      <div style={{ margin: "1rem" }}>
+        <h2>Data</h2>
+        <Row>
+          <Col xs={2}>
+            <b>Team</b>
+          </Col>
+          <Col xs={2}>
+            <b>Four Week Average</b>
+          </Col>
+          <Col xs={2}>
+            <b>Max Points For</b>
+          </Col>
+          <Col xs={2}>
+            <b>Record</b>
+          </Col>
+          <Col xs={2}>
+            <b>Efficiency</b>
+          </Col>
+        </Row>
+        {powerRankData.data.map((team) => (
+          <Row>
+            <Col xs={2}>
+              <div>{team.name}</div>
+            </Col>
+            <Col xs={2}>
+              <div>{team.four_week_avg}</div>
+            </Col>
+            <Col xs={2}>
+              <div>{team.max_points_for}</div>
+            </Col>
+            <Col xs={2}>
+              <div>
+                {team.wins}
+                {"-"}
+                {team.losses}
+                {" ("}
+                {(100 * team.win_pct).toFixed(0)}
+                {"%)"}
+              </div>
+            </Col>
+            <Col xs={2}>
+              <div>
+                {(100 * team.efficiency).toFixed(2)}
+                {"%"}
+              </div>
+            </Col>
+          </Row>
+        ))}
+      </div>
     </Container>
   );
 }
