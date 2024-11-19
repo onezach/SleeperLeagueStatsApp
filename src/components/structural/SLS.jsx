@@ -36,10 +36,18 @@ export default function SLS() {
       return;
     }
 
-    setAlertVariant("success");
-    setAlertMessage("");
-    setLoading(true);
     const leagueData = await r1.json();
+
+    if (leagueData.sport !== "nfl") {
+      setAlertMessage(
+        "Sorry! This application is only compatible with NFL fantasy football leagues."
+      );
+      return;
+    }
+
+    setAlertVariant("success");
+    setAlertMessage("Connecting to " + leagueData.name + "...");
+    setLoading(true);
     const prefix = "https://api.sleeper.app/v1/league/" + LID + "/";
     const weeks = leagueData.settings.leg;
     const matchups = {};
@@ -93,7 +101,7 @@ export default function SLS() {
         <div style={{ margin: "1rem" }}>
           <Container>
             <Stack gap={3}>
-              <h1>Sleeper League Stats</h1>
+              <h1>Sleeper Fantasy Football League Stats</h1>
 
               <Form>
                 <Form.Control
