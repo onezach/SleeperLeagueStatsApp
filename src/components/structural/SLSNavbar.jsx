@@ -19,7 +19,7 @@ export default function SLSNavbar() {
         {data.league.name}
       </Navbar.Brand>
       <Nav variant="pills">
-        <Nav.Link as={Link} to="/powerrankings">
+        <Nav.Link as={Link} to="/power_rankings">
           Power Rankings
         </Nav.Link>
       </Nav>

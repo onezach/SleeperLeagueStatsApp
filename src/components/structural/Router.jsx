@@ -10,7 +10,8 @@ export default function Router() {
       <Routes>
         <Route path="/" element={<SLS />}>
           <Route index element={<Homepage />} />
-          <Route path="/powerrankings" element={<PowerRankings />} />
+          <Route path="/power_rankings" element={<PowerRankings />} />
+          <Route path="*" element={<Homepage />} />
         </Route>
       </Routes>
     </BrowserRouter>
