@@ -18,7 +18,12 @@ export default function PowerRankings() {
 
   const calculateFourWeekAverage = (weekly_points) => {
     let total = 0;
-    for (let i = weekly_points.length - 1; i > weekly_points.length - 5; i--) {
+    const num_weeks = weekly_points.length >= 4 ? 4 : weekly_points.length;
+    for (
+      let i = weekly_points.length - 1;
+      i > weekly_points.length - num_weeks - 1;
+      i--
+    ) {
       total += weekly_points[i];
     }
     return (total / 4).toFixed(2);
@@ -55,9 +60,6 @@ export default function PowerRankings() {
           data.league.settings.last_scored_leg
         ).toFixed(2),
         max_points_for: max_points_for,
-        // points_for:
-        //   data.teams[tidx + 1].settings.fpts +
-        //   data.teams[tidx + 1].settings.fpts_decimal / 100,
         wins: data.teams[tidx + 1].settings.wins,
         losses: data.teams[tidx + 1].settings.losses,
         efficiency:
@@ -99,7 +101,6 @@ export default function PowerRankings() {
         const max_points_for_norm =
           (team.max_points_for - powerRankData.min_mpf) /
           powerRankData.mpf_diff;
-        // const efficiency = team.points_for / team.max_points_for;
         return {
           name: team.name,
           score: (
@@ -141,10 +142,51 @@ export default function PowerRankings() {
     }
   };
 
+  const buildPowerRanks = () => {
+    const total =
+      parseInt(powerRankSliders.four_week_avg) +
+      parseInt(powerRankSliders.max_points_for) +
+      parseInt(powerRankSliders.win_pct) +
+      parseInt(powerRankSliders.efficiency);
+    return powerRanks.map((team, tidx) => {
+      const scoreAsADecimal = team.score / total;
+      return (
+        <div
+          key={"team_" + tidx}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            margin: "0.25rem",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          <div style={{ margin: "0.25rem", width: "2rem"}}>#{tidx + 1}</div>
+          <div style={{ margin: "0.25rem" }}>{team.name}</div>
+          <div
+            style={{
+              width: `${scoreAsADecimal * 100}%`,
+              backgroundColor: `#${Math.floor(
+                256 * (1 - scoreAsADecimal)
+              ).toString(16)}ff00`,
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              zIndex: -1,
+            }}
+          />
+        </div>
+      );
+    });
+  };
+
   return (
     <Container>
       <div style={{ margin: "1rem" }}>
-        <h1>Power Rankings</h1>
+        <h1>
+          Power Rankings {"(Week " + data.league.settings.last_scored_leg + ")"}
+        </h1>
         <p>
           Adjust the sliders according to your weight preferences for different
           criteria.
@@ -154,7 +196,7 @@ export default function PowerRankings() {
       <Form style={{ margin: "1rem" }}>
         <Form.Group as={Row}>
           <Col xs={3}>
-            <div>Four-Week Average</div>
+            <div>{"Four-Week Average (" + powerRankSliders.four_week_avg + ")"}</div>
             <FormRange
               min={0}
               max={10}
@@ -163,10 +205,9 @@ export default function PowerRankings() {
                 handleSliderUpdate("four_week_avg", e.target.value)
               }
             />
-            <div>{powerRankSliders.four_week_avg}</div>
           </Col>
           <Col xs={3}>
-            <div>Max Points-For</div>
+            <div>{"Max Points-For (" + powerRankSliders.max_points_for + ")"}</div>
             <FormRange
               min={0}
               max={10}
@@ -175,46 +216,35 @@ export default function PowerRankings() {
                 handleSliderUpdate("max_points_for", e.target.value)
               }
             />
-            <div>{powerRankSliders.max_points_for}</div>
           </Col>
           <Col xs={3}>
-            <div>Win Percentage</div>
+            <div>{"Win Percentage: (" + powerRankSliders.win_pct + ")"}</div>
             <FormRange
               min={0}
               max={10}
               value={powerRankSliders.win_pct}
               onChange={(e) => handleSliderUpdate("win_pct", e.target.value)}
             />
-            <div>{powerRankSliders.win_pct}</div>
           </Col>
           <Col xs={3}>
-            <div>Efficiency</div>
+            <div>{"Efficiency (" + powerRankSliders.efficiency + ")"}</div>
             <FormRange
               min={0}
               max={10}
               value={powerRankSliders.efficiency}
               onChange={(e) => handleSliderUpdate("efficiency", e.target.value)}
             />
-            <div>{powerRankSliders.efficiency}</div>
           </Col>
         </Form.Group>
       </Form>
       <div style={{ margin: "1rem" }}>
         <h2>Rankings</h2>
-        {powerRanks.map((team, tidx) => (
-          <div key={"team_" + tidx}>
-            {tidx + 1}
-            {") "}
-            {team.name}
-            {": "}
-            {team.score}
-          </div>
-        ))}
+        {buildPowerRanks()}
       </div>
       <div style={{ margin: "1rem" }}>
         <h2>Data</h2>
         <Row>
-          <Col xs={2}>
+          <Col xs={3}>
             <b>Team</b>
           </Col>
           <Col xs={2}>
@@ -232,7 +262,7 @@ export default function PowerRankings() {
         </Row>
         {powerRankData.data.map((team) => (
           <Row>
-            <Col xs={2}>
+            <Col xs={3}>
               <div>{team.name}</div>
             </Col>
             <Col xs={2}>
@@ -243,19 +273,16 @@ export default function PowerRankings() {
             </Col>
             <Col xs={2}>
               <div>
-                {team.wins}
-                {"-"}
-                {team.losses}
-                {" ("}
-                {(100 * team.win_pct).toFixed(0)}
-                {"%)"}
+                {team.wins +
+                  "-" +
+                  team.losses +
+                  " (" +
+                  (100 * team.win_pct).toFixed(0) +
+                  "%)"}
               </div>
             </Col>
             <Col xs={2}>
-              <div>
-                {(100 * team.efficiency).toFixed(2)}
-                {"%"}
-              </div>
+              <div>{(100 * team.efficiency).toFixed(2) + "%"}</div>
             </Col>
           </Row>
         ))}
