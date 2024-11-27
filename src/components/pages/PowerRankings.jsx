@@ -1,12 +1,8 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Container, Form, Col, Row } from "react-bootstrap";
 import FormRange from "react-bootstrap/esm/FormRange";
 
-import SLSContext from "../../context/SLSContext";
-
-export default function PowerRankings() {
-  const [data] = useContext(SLSContext);
-
+export default function PowerRankings(props) {
   const [powerRanks, setPowerRanks] = useState([]);
   const [powerRankSliders, setPowerRankSliders] = useState({
     four_week_avg: 9,
@@ -31,9 +27,9 @@ export default function PowerRankings() {
 
   useEffect(() => {
     let team_weekly_points = [];
-    for (let i = 1; i <= data.league.settings.last_scored_leg; i++) {
-      for (let j = 0; j < data.league.total_rosters; j++) {
-        const points = data.matchups[i][j].points;
+    for (let i = 1; i <= props.data.league.settings.last_scored_leg; i++) {
+      for (let j = 0; j < props.data.league.total_rosters; j++) {
+        const points = props.data.matchups[i][j].points;
         if (i === 1) {
           team_weekly_points.push([]);
         }
@@ -49,22 +45,22 @@ export default function PowerRankings() {
       all_avgs.push(four_week_avg);
 
       const max_points_for =
-        data.teams[tidx + 1].settings.ppts +
-        data.teams[tidx + 1].settings.ppts_decimal / 100;
+        props.data.teams[tidx + 1].settings.ppts +
+        props.data.teams[tidx + 1].settings.ppts_decimal / 100;
       all_mpfs.push(max_points_for);
       return {
-        name: data.teams[tidx + 1].name,
+        name: props.data.teams[tidx + 1].name,
         four_week_avg: four_week_avg,
         win_pct: (
-          data.teams[tidx + 1].settings.wins /
-          data.league.settings.last_scored_leg
+          props.data.teams[tidx + 1].settings.wins /
+          props.data.league.settings.last_scored_leg
         ).toFixed(2),
         max_points_for: max_points_for,
-        wins: data.teams[tidx + 1].settings.wins,
-        losses: data.teams[tidx + 1].settings.losses,
+        wins: props.data.teams[tidx + 1].settings.wins,
+        losses: props.data.teams[tidx + 1].settings.losses,
         efficiency:
-          (data.teams[tidx + 1].settings.fpts +
-            data.teams[tidx + 1].settings.fpts_decimal / 100) /
+          (props.data.teams[tidx + 1].settings.fpts +
+            props.data.teams[tidx + 1].settings.fpts_decimal / 100) /
           max_points_for,
       };
     });
@@ -87,10 +83,10 @@ export default function PowerRankings() {
       mpf_diff: mpf_diff,
     });
   }, [
-    data.league.settings.last_scored_leg,
-    data.league.total_rosters,
-    data.matchups,
-    data.teams,
+    props.data.league.settings.last_scored_leg,
+    props.data.league.total_rosters,
+    props.data.matchups,
+    props.data.teams,
   ]);
 
   useEffect(() => {
@@ -161,7 +157,7 @@ export default function PowerRankings() {
             zIndex: 1,
           }}
         >
-          <div style={{ margin: "0.25rem", width: "2rem"}}>#{tidx + 1}</div>
+          <div style={{ margin: "0.25rem", width: "2rem" }}>#{tidx + 1}</div>
           <div style={{ margin: "0.25rem" }}>{team.name}</div>
           <div
             style={{
@@ -185,7 +181,8 @@ export default function PowerRankings() {
     <Container>
       <div style={{ margin: "1rem" }}>
         <h1>
-          Power Rankings {"(Week " + data.league.settings.last_scored_leg + ")"}
+          Power Rankings{" "}
+          {"(Week " + props.data.league.settings.last_scored_leg + ")"}
         </h1>
         <p>
           Adjust the sliders according to your weight preferences for different
@@ -196,7 +193,9 @@ export default function PowerRankings() {
       <Form style={{ margin: "1rem" }}>
         <Form.Group as={Row}>
           <Col xs={3}>
-            <div>{"Four-Week Average (" + powerRankSliders.four_week_avg + ")"}</div>
+            <div>
+              {"Four-Week Average (" + powerRankSliders.four_week_avg + ")"}
+            </div>
             <FormRange
               min={0}
               max={10}
@@ -207,7 +206,9 @@ export default function PowerRankings() {
             />
           </Col>
           <Col xs={3}>
-            <div>{"Max Points-For (" + powerRankSliders.max_points_for + ")"}</div>
+            <div>
+              {"Max Points-For (" + powerRankSliders.max_points_for + ")"}
+            </div>
             <FormRange
               min={0}
               max={10}

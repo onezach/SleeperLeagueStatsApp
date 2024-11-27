@@ -1,12 +1,8 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { Container, Row, Col } from "react-bootstrap";
 
-import SLSContext from "../../context/SLSContext";
-
-export default function Homepage() {
-  const [data] = useContext(SLSContext);
-
+export default function Homepage(props) {
   const [standings, setStandings] = useState([]);
 
   const rankTeams = (t1, t2) => {
@@ -19,27 +15,27 @@ export default function Homepage() {
 
   useEffect(() => {
     let teams = [];
-    for (let i = 1; i <= data.league.total_rosters; i++) {
-      const avatar = data.teams[i].custom_avatar
-        ? data.teams[i].avatar
-        : "https://sleepercdn.com/avatars/thumbs/" + data.teams[i].avatar;
+    for (let i = 1; i <= props.data.league.total_rosters; i++) {
+      const avatar = props.data.teams[i].custom_avatar
+        ? props.data.teams[i].avatar
+        : "https://sleepercdn.com/avatars/thumbs/" + props.data.teams[i].avatar;
 
       teams.push({
-        name: data.teams[i].name,
+        name: props.data.teams[i].name,
         avatar: avatar,
-        wins: data.teams[i].settings.wins,
-        losses: data.teams[i].settings.losses,
+        wins: props.data.teams[i].settings.wins,
+        losses: props.data.teams[i].settings.losses,
         points_for:
-          data.teams[i].settings.fpts +
-          data.teams[i].settings.fpts_decimal / 100,
+          props.data.teams[i].settings.fpts +
+          props.data.teams[i].settings.fpts_decimal / 100,
         max_points_for:
-          data.teams[i].settings.ppts +
-          data.teams[i].settings.ppts_decimal / 100,
+          props.data.teams[i].settings.ppts +
+          props.data.teams[i].settings.ppts_decimal / 100,
       });
     }
     teams.sort(rankTeams);
     setStandings(teams);
-  }, [data.league.total_rosters, data.teams]);
+  }, [props.data.league.total_rosters, props.data.teams]);
 
   return (
     <Container>

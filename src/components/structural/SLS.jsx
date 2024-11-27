@@ -3,24 +3,13 @@ import { Outlet } from "react-router-dom";
 import { Form, Button, Alert, Container, Stack } from "react-bootstrap";
 
 import SLSNavbar from "./SLSNavbar";
-import SLSContext from "../../context/SLSContext";
 
-export default function SLS() {
-  const [data, setData] = useState({ league: {}, matchups: {}, teams: {} });
-  const [dataInitialized, setDataInitialized] = useState(false);
-
+export default function SLS(props) {
   const [loading, setLoading] = useState(false);
 
   const LIDref = useRef();
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState("danger");
-
-  const reset = () => {
-    setData({ league: {}, matchups: {}, teams: {} });
-    setDataInitialized(false);
-    setAlertMessage("");
-    setAlertVariant("danger");
-  };
 
   const handleConnect = async () => {
     const LID = LIDref.current.value;
@@ -86,17 +75,18 @@ export default function SLS() {
     }
 
     setLoading(false);
-    setData({ league: leagueData, matchups: matchups, teams: teams });
-    setDataInitialized(true);
+    setAlertMessage("");
+    setAlertVariant("danger");
+    props.start(leagueData, matchups, teams);
   };
 
   return (
     <>
-      {dataInitialized ? (
-        <SLSContext.Provider value={[data, reset]}>
-          <SLSNavbar />
+      {props.dataInitialized ? (
+        <div>
+          <SLSNavbar reset={props.reset} data={props.data} />
           <Outlet />
-        </SLSContext.Provider>
+        </div>
       ) : (
         <div style={{ margin: "1rem" }}>
           <Container>
