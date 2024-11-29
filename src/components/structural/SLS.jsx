@@ -58,8 +58,11 @@ export default function SLS(props) {
     const r4 = await fetch(prefix + "rosters");
     const rosters = await r4.json();
     const teams = {};
+    let team_list = [];
 
     for (let i = 0; i < leagueData.total_rosters; i++) {
+      const name = usersByID[rosters[i].owner_id].metadata.team_name ? usersByID[rosters[i].owner_id].metadata.team_name : usersByID[rosters[i].owner_id].display_name;
+      team_list.push(name);
       teams[rosters[i].roster_id] = {
         ...rosters[i],
         avatar: usersByID[rosters[i].owner_id].metadata.avatar
@@ -68,11 +71,11 @@ export default function SLS(props) {
         custom_avatar: usersByID[rosters[i].owner_id].metadata.avatar
           ? true
           : false,
-        name: usersByID[rosters[i].owner_id].metadata.team_name
-          ? usersByID[rosters[i].owner_id].metadata.team_name
-          : usersByID[rosters[i].owner_id].display_name,
+        name: name,
       };
     }
+
+    leagueData["team_list"] = team_list;
 
     setLoading(false);
     setAlertMessage("");

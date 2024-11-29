@@ -1,4 +1,4 @@
-import { Nav, Navbar, Button } from "react-bootstrap";
+import { Nav, Navbar, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function SLSNavbar(props) {
@@ -16,9 +16,14 @@ export default function SLSNavbar(props) {
         {props.data.league.name}
       </Navbar.Brand>
       <Nav variant="pills">
-        <Nav.Link as={Link} to="/power_rankings">
+        <Nav.Link as={Link} to="/power_rankings"  style={{ margin: "0.5rem" }}>
           Power Rankings
         </Nav.Link>
+        <DropdownButton title="Teams"  style={{ margin: "0.5rem" }}>
+          {props.data.league.team_list.map((team) => {
+            return <Dropdown.Item key={team} as={Link} to={`/teams/${team}`}>{team}</Dropdown.Item>
+          })}
+        </DropdownButton>
       </Nav>
       <Navbar.Collapse
         className="justify-content-end"

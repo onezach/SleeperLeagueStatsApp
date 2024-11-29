@@ -5,6 +5,7 @@ import SLS from "./SLS";
 import Homepage from "../pages/Homepage";
 import PowerRankings from "../pages/PowerRankings";
 import NoMatch from "../pages/NoMatch";
+import Team from "../pages/Team";
 
 export default function Router() {
   const [data, setData] = useState({ league: {}, matchups: {}, teams: {} });
@@ -39,6 +40,15 @@ export default function Router() {
             path="/power_rankings"
             element={<PowerRankings data={data} />}
           />
+          {dataInitialized && data.league.team_list.map((team) => {
+            return (
+              <Route
+                key={team}
+                path={`/teams/${team}`}
+                element={<Team name={team} />}
+              />
+            );
+          })}
           <Route path="*" element={<NoMatch />} />
         </Route>
       </Routes>
