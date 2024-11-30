@@ -62,7 +62,7 @@ export default function Router() {
           path="/"
           element={<SLS data={data} reset={reset} start={start} />}
         >
-          <Route index element={<Homepage />} />
+          <Route index element={<Homepage data={data} />} />
           <Route
             path="/power_rankings"
             element={<PowerRankings powerRankData={data.powerRankData} />}
