@@ -82,7 +82,6 @@ export default function SLS(props) {
 
   const handleConnect = async () => {
     const LID = LIDref.current.value;
-    console.log("LID: " + LID);
     if (LID.length === 0) {
       setAlertMessage("Invalid League ID");
       return;
