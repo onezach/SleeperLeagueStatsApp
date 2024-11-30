@@ -11,9 +11,78 @@ export default function SLS(props) {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState("danger");
 
-  const handleConnect = async () => {
-    const LID = LIDref.current.value;
+  const calculateFourWeekAverage = (weekly_points) => {
+    let total = 0;
+    const num_weeks = weekly_points.length >= 4 ? 4 : weekly_points.length;
+    for (
+      let i = weekly_points.length - 1;
+      i > weekly_points.length - num_weeks - 1;
+      i--
+    ) {
+      total += weekly_points[i];
+    }
+    return (total / 4).toFixed(2);
+  };
 
+  const powerRankData = (league, matchups, teams) => {
+    const rank_week = league.settings.last_scored_leg;
+    let team_weekly_points = [];
+    for (let i = 1; i <= rank_week; i++) {
+      for (let j = 0; j < league.total_rosters; j++) {
+        const points = matchups[i][j].points;
+        if (i === 1) {
+          team_weekly_points.push([]);
+        }
+        team_weekly_points[j].push(points);
+      }
+    }
+
+    let all_avgs = [];
+    let all_mpfs = [];
+
+    const raw_data = team_weekly_points.map((team, tidx) => {
+      const four_week_avg = calculateFourWeekAverage(team);
+      all_avgs.push(four_week_avg);
+
+      const max_points_for =
+        teams[tidx + 1].settings.ppts +
+        teams[tidx + 1].settings.ppts_decimal / 100;
+      all_mpfs.push(max_points_for);
+      return {
+        name: teams[tidx + 1].name,
+        four_week_avg: four_week_avg,
+        win_pct: (teams[tidx + 1].settings.wins / rank_week).toFixed(2),
+        max_points_for: max_points_for,
+        wins: teams[tidx + 1].settings.wins,
+        losses: teams[tidx + 1].settings.losses,
+        efficiency:
+          (teams[tidx + 1].settings.fpts +
+            teams[tidx + 1].settings.fpts_decimal / 100) /
+          max_points_for,
+      };
+    });
+
+    // X_norm = (X - X.min()) / (X.max() - X.min())
+    const min_avg = Math.min.apply(Math, all_avgs);
+    const max_avg = Math.max.apply(Math, all_avgs);
+    const avg_diff = max_avg - min_avg;
+    const min_mpf = Math.min.apply(Math, all_mpfs);
+    const max_mpf = Math.max.apply(Math, all_mpfs);
+    const mpf_diff = max_mpf - min_mpf;
+
+    return {
+      data: raw_data,
+      min_avg: min_avg,
+      avg_diff: avg_diff,
+      min_mpf: min_mpf,
+      mpf_diff: mpf_diff,
+      rank_week: rank_week,
+    };
+  };
+
+  const handleConnect = async () => {
+    const LID = sessionStorage.getItem("league_id") ? sessionStorage.getItem("league_id") : LIDref.current.value;
+    console.log("LID: " + LID)
     if (LID.length === 0) {
       setAlertMessage("Invalid League ID");
       return;
@@ -61,7 +130,9 @@ export default function SLS(props) {
     let team_list = [];
 
     for (let i = 0; i < leagueData.total_rosters; i++) {
-      const name = usersByID[rosters[i].owner_id].metadata.team_name ? usersByID[rosters[i].owner_id].metadata.team_name : usersByID[rosters[i].owner_id].display_name;
+      const name = usersByID[rosters[i].owner_id].metadata.team_name
+        ? usersByID[rosters[i].owner_id].metadata.team_name
+        : usersByID[rosters[i].owner_id].display_name;
       team_list.push(name);
       teams[rosters[i].roster_id] = {
         ...rosters[i],
@@ -75,19 +146,28 @@ export default function SLS(props) {
       };
     }
 
-    leagueData["team_list"] = team_list;
-
     setLoading(false);
     setAlertMessage("");
     setAlertVariant("danger");
-    props.start(leagueData, matchups, teams);
+    props.start(
+      leagueData,
+      matchups,
+      teams,
+      powerRankData(leagueData, matchups, teams),
+      team_list
+    );
   };
 
   return (
     <>
-      {props.dataInitialized ? (
+      {sessionStorage.getItem("league_id") ? (
         <div>
-          <SLSNavbar reset={props.reset} data={props.data} />
+          <SLSNavbar
+            reset={props.reset}
+            teams={props.data.team_list}
+            league_name={props.data.league.name}
+            league_avatar={props.data.league.avatar}
+          />
           <Outlet />
         </div>
       ) : (

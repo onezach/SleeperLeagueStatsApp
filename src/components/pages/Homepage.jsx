@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { Container, Row, Col } from "react-bootstrap";
 
-export default function Homepage(props) {
+export default function Homepage() {
   const [standings, setStandings] = useState([]);
 
   const rankTeams = (t1, t2) => {
@@ -14,28 +14,33 @@ export default function Homepage(props) {
   };
 
   useEffect(() => {
-    let teams = [];
-    for (let i = 1; i <= props.data.league.total_rosters; i++) {
-      const avatar = props.data.teams[i].custom_avatar
-        ? props.data.teams[i].avatar
-        : "https://sleepercdn.com/avatars/thumbs/" + props.data.teams[i].avatar;
+    let temp_standings = [];
+    const leagueDataRaw = sessionStorage.getItem("league_data");
+    const leagueData = JSON.parse(leagueDataRaw);
+    const league = leagueData.league;
+    const teams = leagueData.teams;
 
-      teams.push({
-        name: props.data.teams[i].name,
+    console.log(JSON.stringify(leagueData));
+
+    for (let i = 1; i <= league.total_rosters; i++) {
+      const avatar = teams[i].custom_avatar
+        ? teams[i].avatar
+        : "https://sleepercdn.com/avatars/thumbs/" + teams[i].avatar;
+
+      temp_standings.push({
+        name: teams[i].name,
         avatar: avatar,
-        wins: props.data.teams[i].settings.wins,
-        losses: props.data.teams[i].settings.losses,
+        wins: teams[i].settings.wins,
+        losses: teams[i].settings.losses,
         points_for:
-          props.data.teams[i].settings.fpts +
-          props.data.teams[i].settings.fpts_decimal / 100,
+          teams[i].settings.fpts + teams[i].settings.fpts_decimal / 100,
         max_points_for:
-          props.data.teams[i].settings.ppts +
-          props.data.teams[i].settings.ppts_decimal / 100,
+          teams[i].settings.ppts + teams[i].settings.ppts_decimal / 100,
       });
     }
-    teams.sort(rankTeams);
-    setStandings(teams);
-  }, [props.data.league.total_rosters, props.data.teams]);
+    temp_standings.sort(rankTeams);
+    setStandings(temp_standings);
+  }, []);
 
   return (
     <Container>

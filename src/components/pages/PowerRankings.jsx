@@ -10,84 +10,8 @@ export default function PowerRankings(props) {
     win_pct: 6,
     efficiency: 7,
   });
-  const [powerRankData, setPowerRankData] = useState({ data: [] });
 
-  const calculateFourWeekAverage = (weekly_points) => {
-    let total = 0;
-    const num_weeks = weekly_points.length >= 4 ? 4 : weekly_points.length;
-    for (
-      let i = weekly_points.length - 1;
-      i > weekly_points.length - num_weeks - 1;
-      i--
-    ) {
-      total += weekly_points[i];
-    }
-    return (total / 4).toFixed(2);
-  };
-
-  useEffect(() => {
-    let team_weekly_points = [];
-    for (let i = 1; i <= props.data.league.settings.last_scored_leg; i++) {
-      for (let j = 0; j < props.data.league.total_rosters; j++) {
-        const points = props.data.matchups[i][j].points;
-        if (i === 1) {
-          team_weekly_points.push([]);
-        }
-        team_weekly_points[j].push(points);
-      }
-    }
-
-    let all_avgs = [];
-    let all_mpfs = [];
-
-    const raw_data = team_weekly_points.map((team, tidx) => {
-      const four_week_avg = calculateFourWeekAverage(team);
-      all_avgs.push(four_week_avg);
-
-      const max_points_for =
-        props.data.teams[tidx + 1].settings.ppts +
-        props.data.teams[tidx + 1].settings.ppts_decimal / 100;
-      all_mpfs.push(max_points_for);
-      return {
-        name: props.data.teams[tidx + 1].name,
-        four_week_avg: four_week_avg,
-        win_pct: (
-          props.data.teams[tidx + 1].settings.wins /
-          props.data.league.settings.last_scored_leg
-        ).toFixed(2),
-        max_points_for: max_points_for,
-        wins: props.data.teams[tidx + 1].settings.wins,
-        losses: props.data.teams[tidx + 1].settings.losses,
-        efficiency:
-          (props.data.teams[tidx + 1].settings.fpts +
-            props.data.teams[tidx + 1].settings.fpts_decimal / 100) /
-          max_points_for,
-      };
-    });
-    // .sort((t1, t2) => t2.val - t1.val);
-
-    // X_norm = (X - X.min()) / (X.max() - X.min())
-
-    const min_avg = Math.min.apply(Math, all_avgs);
-    const max_avg = Math.max.apply(Math, all_avgs);
-    const avg_diff = max_avg - min_avg;
-    const min_mpf = Math.min.apply(Math, all_mpfs);
-    const max_mpf = Math.max.apply(Math, all_mpfs);
-    const mpf_diff = max_mpf - min_mpf;
-
-    setPowerRankData({
-      data: raw_data,
-      min_avg: min_avg,
-      avg_diff: avg_diff,
-      min_mpf: min_mpf,
-      mpf_diff: mpf_diff,
-    });
-  }, [
-    props.data.league.settings.last_scored_leg,
-    props.data.league.total_rosters,
-    props.data.matchups,
-    props.data.teams,
-  ]);
+  const { powerRankData } = props;
 
   useEffect(() => {
     const power_ranks = powerRankData.data
@@ -180,10 +104,7 @@ export default function PowerRankings(props) {
   return (
     <Container>
       <div style={{ margin: "1rem" }}>
-        <h1>
-          Power Rankings{" "}
-          {"(Week " + props.data.league.settings.last_scored_leg + ")"}
-        </h1>
+        <h1>Power Rankings {"(Week " + powerRankData.rank_week + ")"}</h1>
         <p>
           Adjust the sliders according to your weight preferences for different
           criteria.
@@ -262,7 +183,7 @@ export default function PowerRankings(props) {
           </Col>
         </Row>
         {powerRankData.data.map((team) => (
-          <Row>
+          <Row key={team.name}>
             <Col xs={3}>
               <div>{team.name}</div>
             </Col>

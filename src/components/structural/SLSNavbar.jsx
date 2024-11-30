@@ -7,21 +7,23 @@ export default function SLSNavbar(props) {
       <Navbar.Brand style={{ margin: "0.5rem" }} as={Link} to="/">
         <img
           alt="League Logo"
-          src={
-            "https://sleepercdn.com/avatars/thumbs/" + props.data.league.avatar
-          }
+          src={"https://sleepercdn.com/avatars/thumbs/" + props.league_avatar}
           width="30"
           height="30"
         />{" "}
-        {props.data.league.name}
+        {props.league_name}
       </Navbar.Brand>
       <Nav variant="pills">
-        <Nav.Link as={Link} to="/power_rankings"  style={{ margin: "0.5rem" }}>
+        <Nav.Link as={Link} to="/power_rankings" style={{ margin: "0.5rem" }}>
           Power Rankings
         </Nav.Link>
-        <DropdownButton title="Teams"  style={{ margin: "0.5rem" }}>
-          {props.data.league.team_list.map((team) => {
-            return <Dropdown.Item key={team} as={Link} to={`/teams/${team}`}>{team}</Dropdown.Item>
+        <DropdownButton title="Teams" style={{ margin: "0.5rem" }}>
+          {props.teams.map((team) => {
+            return (
+              <Dropdown.Item key={team} as={Link} to={`/teams/${team}`}>
+                {team}
+              </Dropdown.Item>
+            );
           })}
         </DropdownButton>
       </Nav>
