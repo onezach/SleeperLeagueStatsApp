@@ -77,6 +77,7 @@ export default function Router() {
             );
           })}
           <Route path="*" element={<NoMatch />} />
+          <Route path="/404" element={<NoMatch />} />
         </Route>
       </Routes>
     </BrowserRouter>
