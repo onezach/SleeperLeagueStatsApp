@@ -137,10 +137,8 @@ export default function SLS(props) {
         ...rosters[i],
         avatar: usersByID[rosters[i].owner_id].metadata.avatar
           ? usersByID[rosters[i].owner_id].metadata.avatar
-          : usersByID[rosters[i].owner_id].avatar,
-        custom_avatar: usersByID[rosters[i].owner_id].metadata.avatar
-          ? true
-          : false,
+          : "https://sleepercdn.com/avatars/thumbs/" +
+            usersByID[rosters[i].owner_id].avatar,
         name: name,
       };
     }

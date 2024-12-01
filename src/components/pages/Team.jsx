@@ -1,7 +1,10 @@
+import { Container, Row, Col } from "react-bootstrap";
+
 export default function Team(props) {
   return (
-    <div>
+    <Container>
+        <Row></Row>
       <h1>{props.name}</h1>
-    </div>
+    </Container>
   );
 }

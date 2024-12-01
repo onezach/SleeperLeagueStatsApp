@@ -16,13 +16,9 @@ export default function Homepage(props) {
   useEffect(() => {
     let teams = [];
     for (let i = 1; i <= props.data.league.total_rosters; i++) {
-      const avatar = props.data.teams[i].custom_avatar
-        ? props.data.teams[i].avatar
-        : "https://sleepercdn.com/avatars/thumbs/" + props.data.teams[i].avatar;
-
       teams.push({
         name: props.data.teams[i].name,
-        avatar: avatar,
+        avatar: props.data.teams[i].avatar,
         wins: props.data.teams[i].settings.wins,
         losses: props.data.teams[i].settings.losses,
         points_for:
