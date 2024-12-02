@@ -24,6 +24,52 @@ export default function SLS(props) {
     return (total / 4).toFixed(2);
   };
 
+  const teamMatchupData = (data, current_week, total_weeks, teams) => {
+    let matchupDataByTeam = [];
+
+    let allWeeks = [];
+
+    for (let i = 1; i <= total_weeks; i++) {
+      let thisWeek = {};
+      for (let j = 0; j < teams.length; j++) {
+        const mid = data[i][j].matchup_id;
+        const team = teams[data[i][j].roster_id - 1].name;
+        const points = i <= current_week ? data[i][j].points : "-";
+        if (mid in thisWeek) {
+          thisWeek[mid].t2 = { team: team, points: points, id: j };
+        } else {
+          thisWeek[mid] = {};
+          thisWeek[mid].t1 = { team: team, points: points, id: j };
+        }
+      }
+      allWeeks.push(thisWeek);
+    }
+
+    for (let x = 0; x < teams.length; x++) {
+      let thisTeam = [];
+      for (let y = 0; y < allWeeks.length; y++) {
+        for (let z = 1; z <= teams.length / 2; z++) {
+          if (allWeeks[y][z].t1.id === x) {
+            thisTeam.push({
+              opponent: allWeeks[y][z].t2.team,
+              points: allWeeks[y][z].t1.points,
+            });
+            break;
+          } else if (allWeeks[y][z].t2.id === x) {
+            thisTeam.push({
+              opponent: allWeeks[y][z].t1.team,
+              points: allWeeks[y][z].t2.points,
+            });
+            break;
+          }
+        }
+      }
+      matchupDataByTeam.push(thisTeam);
+    }
+
+    return matchupDataByTeam;
+  };
+
   const powerRankData = (league, matchups, teams) => {
     const rank_week = league.settings.last_scored_leg;
     let team_weekly_points = [];
@@ -96,10 +142,10 @@ export default function SLS(props) {
     setAlertMessage("Connecting to " + leagueData.name + "...");
     setLoading(true);
     const prefix = "https://api.sleeper.app/v1/league/" + LID + "/";
-    const weeks = leagueData.settings.leg;
+    const totalWeeks = leagueData.settings.playoff_week_start - 1;
     const matchups = {};
 
-    for (let i = 1; i <= weeks; i++) {
+    for (let i = 1; i <= totalWeeks; i++) {
       const r2 = await fetch(prefix + "matchups/" + i);
       const thisWeekMatches = await r2.json();
       matchups[i] = thisWeekMatches;
@@ -138,10 +184,19 @@ export default function SLS(props) {
         wins: rosters[i].settings.wins,
         losses: rosters[i].settings.losses,
         efficiency: points_for / max_points_for,
-        win_pct: (
-          rosters[i].settings.wins / leagueData.settings.last_scored_leg
-        ),
+        win_pct: rosters[i].settings.wins / leagueData.settings.last_scored_leg,
       });
+    }
+
+    const matchupData = teamMatchupData(
+      matchups,
+      leagueData.settings.leg,
+      totalWeeks,
+      teams
+    );
+
+    for (let x = 0; x < teams.length; x++) {
+      teams[x] = {...teams[x], matchups: matchupData[x]}
     }
 
     setLoading(false);
