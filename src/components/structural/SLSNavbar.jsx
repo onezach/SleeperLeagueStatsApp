@@ -20,8 +20,12 @@ export default function SLSNavbar(props) {
         <DropdownButton title="Teams" style={{ margin: "0.5rem" }}>
           {props.teams.map((team) => {
             return (
-              <Dropdown.Item key={team} as={Link} to={`/teams/${team}`}>
-                {team}
+              <Dropdown.Item
+                key={team.name}
+                as={Link}
+                to={`/teams/${team.name}`}
+              >
+                {team.name}
               </Dropdown.Item>
             );
           })}

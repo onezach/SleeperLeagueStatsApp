@@ -44,21 +44,11 @@ export default function SLS(props) {
       const four_week_avg = calculateFourWeekAverage(team);
       all_avgs.push(four_week_avg);
 
-      const max_points_for =
-        teams[tidx + 1].settings.ppts +
-        teams[tidx + 1].settings.ppts_decimal / 100;
+      const max_points_for = teams[tidx].max_points_for;
       all_mpfs.push(max_points_for);
       return {
-        name: teams[tidx + 1].name,
+        ...teams[tidx],
         four_week_avg: four_week_avg,
-        win_pct: (teams[tidx + 1].settings.wins / rank_week).toFixed(2),
-        max_points_for: max_points_for,
-        wins: teams[tidx + 1].settings.wins,
-        losses: teams[tidx + 1].settings.losses,
-        efficiency:
-          (teams[tidx + 1].settings.fpts +
-            teams[tidx + 1].settings.fpts_decimal / 100) /
-          max_points_for,
       };
     });
 
@@ -119,28 +109,39 @@ export default function SLS(props) {
     const users = await r3.json();
     const usersByID = {};
 
-    for (let i = 0; i < leagueData.total_rosters; i++) {
+    const numTeams = leagueData.total_rosters;
+
+    for (let i = 0; i < numTeams; i++) {
       usersByID[users[i].user_id] = users[i];
     }
 
     const r4 = await fetch(prefix + "rosters");
     const rosters = await r4.json();
-    const teams = {};
-    let team_list = [];
+    const teams = [];
 
-    for (let i = 0; i < leagueData.total_rosters; i++) {
+    for (let i = 0; i < numTeams; i++) {
       const name = usersByID[rosters[i].owner_id].metadata.team_name
         ? usersByID[rosters[i].owner_id].metadata.team_name
         : usersByID[rosters[i].owner_id].display_name;
-      team_list.push(name);
-      teams[rosters[i].roster_id] = {
-        ...rosters[i],
+      const points_for =
+        rosters[i].settings.fpts + rosters[i].settings.fpts_decimal / 100;
+      const max_points_for =
+        rosters[i].settings.ppts + rosters[i].settings.ppts_decimal / 100;
+      teams.push({
         avatar: usersByID[rosters[i].owner_id].metadata.avatar
           ? usersByID[rosters[i].owner_id].metadata.avatar
           : "https://sleepercdn.com/avatars/thumbs/" +
             usersByID[rosters[i].owner_id].avatar,
         name: name,
-      };
+        points_for: points_for,
+        max_points_for: max_points_for,
+        wins: rosters[i].settings.wins,
+        losses: rosters[i].settings.losses,
+        efficiency: points_for / max_points_for,
+        win_pct: (
+          rosters[i].settings.wins / leagueData.settings.last_scored_leg
+        ).toFixed(2),
+      });
     }
 
     setLoading(false);
@@ -150,8 +151,7 @@ export default function SLS(props) {
       leagueData,
       matchups,
       teams,
-      powerRankData(leagueData, matchups, teams),
-      team_list
+      powerRankData(leagueData, matchups, teams)
     );
   };
 
@@ -161,7 +161,7 @@ export default function SLS(props) {
         <div>
           <SLSNavbar
             reset={props.reset}
-            teams={props.data.team_list}
+            teams={props.data.teams}
             league_name={props.data.league.name}
             league_avatar={props.data.league.avatar}
           />

@@ -1,38 +1,6 @@
-import { useState, useEffect } from "react";
-
 import { Container, Row, Col } from "react-bootstrap";
 
 export default function Homepage(props) {
-  const [standings, setStandings] = useState([]);
-
-  const rankTeams = (t1, t2) => {
-    if (t1.wins === t2.wins) {
-      return t2.points_for - t1.points_for;
-    } else {
-      return t2.wins - t1.wins;
-    }
-  };
-
-  useEffect(() => {
-    let teams = [];
-    for (let i = 1; i <= props.data.league.total_rosters; i++) {
-      teams.push({
-        name: props.data.teams[i].name,
-        avatar: props.data.teams[i].avatar,
-        wins: props.data.teams[i].settings.wins,
-        losses: props.data.teams[i].settings.losses,
-        points_for:
-          props.data.teams[i].settings.fpts +
-          props.data.teams[i].settings.fpts_decimal / 100,
-        max_points_for:
-          props.data.teams[i].settings.ppts +
-          props.data.teams[i].settings.ppts_decimal / 100,
-      });
-    }
-    teams.sort(rankTeams);
-    setStandings(teams);
-  }, [props.data.league.total_rosters, props.data.teams]);
-
   return (
     <Container>
       <h1>Overview</h1>
@@ -53,7 +21,7 @@ export default function Homepage(props) {
           <b>Max Points For</b>
         </Col>
       </Row>
-      {standings.map((team, rank) => (
+      {props.standings.map((team, rank) => (
         <Row key={team.name} style={{ margin: "0.2rem" }}>
           <Col xs={1}>{rank + 1}</Col>
           <Col xs={3}>
@@ -69,7 +37,6 @@ export default function Homepage(props) {
           <Col xs={2}>{team.max_points_for}</Col>
         </Row>
       ))}
-      {/* <Row>{JSON.stringify(data.teams)}</Row> */}
     </Container>
   );
 }

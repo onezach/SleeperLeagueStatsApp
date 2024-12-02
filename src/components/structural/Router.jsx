@@ -11,18 +11,16 @@ export default function Router() {
   const [data, setData] = useState({
     league: {},
     matchups: {},
-    teams: {},
+    teams: [],
     powerRankData: { data: [] },
-    team_list: [],
   });
 
   const reset = () => {
     setData({
       league: {},
       matchups: {},
-      teams: {},
+      teams: [],
       powerRankData: { data: [] },
-      team_list: [],
     });
     sessionStorage.removeItem("league_id");
     sessionStorage.removeItem("league_data");
@@ -34,7 +32,6 @@ export default function Router() {
       matchups: matchups,
       teams: teams,
       powerRankData: powerRankData,
-      team_list: team_list,
     });
     sessionStorage.setItem("league_id", leagueData.league_id);
     sessionStorage.setItem(
@@ -44,7 +41,6 @@ export default function Router() {
         matchups: matchups,
         teams: teams,
         powerRankData: powerRankData,
-        team_list: team_list,
       })
     );
   };
@@ -62,17 +58,30 @@ export default function Router() {
           path="/"
           element={<SLS data={data} reset={reset} start={start} />}
         >
-          <Route index element={<Homepage data={data} />} />
+          <Route
+            index
+            element={
+              <Homepage
+                standings={data.teams.sort((t1, t2) => {
+                  if (t1.wins === t2.wins) {
+                    return t2.points_for - t1.points_for;
+                  } else {
+                    return t2.wins - t1.wins;
+                  }
+                })}
+              />
+            }
+          />
           <Route
             path="/power_rankings"
             element={<PowerRankings powerRankData={data.powerRankData} />}
           />
-          {data.team_list.map((team) => {
+          {data.teams.map((team, tidx) => {
             return (
               <Route
-                key={team}
-                path={`/teams/${team}`}
-                element={<Team name={team} />}
+                key={team.name}
+                path={`/teams/${team.name}`}
+                element={<Team data={data.teams[tidx]} />}
               />
             );
           })}
