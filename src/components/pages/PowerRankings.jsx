@@ -34,14 +34,7 @@ export default function PowerRankings(props) {
       .sort((t1, t2) => t2.score - t1.score);
 
     setPowerRanks(power_ranks);
-  }, [
-    powerRankSliders,
-    powerRankData.avg_diff,
-    powerRankData.data,
-    powerRankData.min_avg,
-    powerRankData.min_mpf,
-    powerRankData.mpf_diff,
-  ]);
+  }, [powerRankSliders, powerRankData]);
 
   const handleSliderUpdate = (metric, value) => {
     switch (metric) {
@@ -62,7 +55,7 @@ export default function PowerRankings(props) {
     }
   };
 
-  const buildPowerRanks = () => {
+  const buildVisualization = () => {
     const total =
       parseInt(powerRankSliders.four_week_avg) +
       parseInt(powerRankSliders.max_points_for) +
@@ -103,7 +96,7 @@ export default function PowerRankings(props) {
 
   return (
     <Container>
-      <div style={{ margin: "1rem" }}>
+      <div>
         <h1>Power Rankings {"(Week " + powerRankData.rank_week + ")"}</h1>
         <p>
           Adjust the sliders according to your weight preferences for different
@@ -111,9 +104,9 @@ export default function PowerRankings(props) {
         </p>
       </div>
 
-      <Form style={{ margin: "1rem" }}>
+      <Form>
         <Form.Group as={Row}>
-          <Col xs={3}>
+          <Col xs={6} lg={3}>
             <div>
               {"Four-Week Average (" + powerRankSliders.four_week_avg + ")"}
             </div>
@@ -126,7 +119,7 @@ export default function PowerRankings(props) {
               }
             />
           </Col>
-          <Col xs={3}>
+          <Col xs={6} lg={3}>
             <div>
               {"Max Points-For (" + powerRankSliders.max_points_for + ")"}
             </div>
@@ -139,7 +132,7 @@ export default function PowerRankings(props) {
               }
             />
           </Col>
-          <Col xs={3}>
+          <Col xs={6} lg={3}>
             <div>{"Win Percentage: (" + powerRankSliders.win_pct + ")"}</div>
             <FormRange
               min={0}
@@ -148,7 +141,7 @@ export default function PowerRankings(props) {
               onChange={(e) => handleSliderUpdate("win_pct", e.target.value)}
             />
           </Col>
-          <Col xs={3}>
+          <Col xs={6} lg={3}>
             <div>{"Efficiency (" + powerRankSliders.efficiency + ")"}</div>
             <FormRange
               min={0}
@@ -159,55 +152,53 @@ export default function PowerRankings(props) {
           </Col>
         </Form.Group>
       </Form>
-      <div style={{ margin: "1rem" }}>
+      <div>
         <h2>Rankings</h2>
-        {buildPowerRanks()}
+        {buildVisualization()}
       </div>
-      <div style={{ margin: "1rem" }}>
-        <h2>Data</h2>
-        <Row>
-          <Col xs={3}>
-            <b>Team</b>
-          </Col>
-          <Col xs={2}>
-            <b>Four Week Average</b>
-          </Col>
-          <Col xs={2}>
-            <b>Max Points For</b>
-          </Col>
-          <Col xs={2}>
-            <b>Record</b>
-          </Col>
-          <Col xs={2}>
-            <b>Efficiency</b>
-          </Col>
-        </Row>
-        {powerRankData.data.map((team) => (
-          <Row key={team.name}>
-            <Col xs={3}>
-              <div>{team.name}</div>
-            </Col>
-            <Col xs={2}>
-              <div>{team.four_week_avg}</div>
-            </Col>
-            <Col xs={2}>
-              <div>{team.max_points_for}</div>
-            </Col>
-            <Col xs={2}>
-              <div>
-                {team.wins +
-                  "-" +
-                  team.losses +
-                  " (" +
-                  (100 * team.win_pct).toFixed(0) +
-                  "%)"}
-              </div>
-            </Col>
-            <Col xs={2}>
-              <div>{(100 * team.efficiency).toFixed(2) + "%"}</div>
-            </Col>
-          </Row>
-        ))}
+      <h2>Data</h2>
+      <div
+        style={{
+          width: "100%",
+          overflowX: "auto",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        <table
+          style={{
+            minWidth: "1000px",
+            borderCollapse: "collapse",
+            border: "1px solid black",
+          }}
+        >
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th>Four Week Average</th>
+              <th>Max Points For</th>
+              <th>Record</th>
+              <th>Efficiency</th>
+            </tr>
+          </thead>
+          <tbody>
+            {powerRankData.data.map((team) => (
+              <tr key={team.name}>
+                <td>{team.name}</td>
+                <td>{team.four_week_avg}</td>
+                <td>{team.max_points_for}</td>
+                <td>
+                  {team.wins +
+                    "-" +
+                    team.losses +
+                    " (" +
+                    (100 * team.win_pct).toFixed(0) +
+                    "%)"}
+                </td>
+                <td>{(100 * team.efficiency).toFixed(2) + "%"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </Container>
   );
