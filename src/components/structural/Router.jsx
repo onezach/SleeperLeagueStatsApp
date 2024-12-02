@@ -26,7 +26,7 @@ export default function Router() {
     sessionStorage.removeItem("league_data");
   };
 
-  const start = (leagueData, matchups, teams, powerRankData, team_list) => {
+  const start = (leagueData, matchups, teams, powerRankData) => {
     setData({
       league: leagueData,
       matchups: matchups,

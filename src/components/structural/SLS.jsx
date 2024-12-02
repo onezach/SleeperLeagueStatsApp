@@ -140,7 +140,7 @@ export default function SLS(props) {
         efficiency: points_for / max_points_for,
         win_pct: (
           rosters[i].settings.wins / leagueData.settings.last_scored_leg
-        ).toFixed(2),
+        ),
       });
     }
 
