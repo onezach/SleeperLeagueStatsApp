@@ -21,6 +21,16 @@ export default function Team(props) {
         
         </Col> */}
       </Row>
+      <Row>
+        {props.data.matchups.map((week, idx) => {
+          return (
+            <div>
+              Week {idx + 1}: {props.data.name} vs. {week.opponent}...
+              {week.points_for}-{week.points_against}
+            </div>
+          );
+        })}
+      </Row>
     </Container>
   );
 }

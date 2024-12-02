@@ -52,13 +52,15 @@ export default function SLS(props) {
           if (allWeeks[y][z].t1.id === x) {
             thisTeam.push({
               opponent: allWeeks[y][z].t2.team,
-              points: allWeeks[y][z].t1.points,
+              points_for: allWeeks[y][z].t1.points,
+              points_against: allWeeks[y][z].t2.points,
             });
             break;
           } else if (allWeeks[y][z].t2.id === x) {
             thisTeam.push({
               opponent: allWeeks[y][z].t1.team,
-              points: allWeeks[y][z].t2.points,
+              points_for: allWeeks[y][z].t2.points,
+              points_against: allWeeks[y][z].t1.points,
             });
             break;
           }
@@ -196,7 +198,7 @@ export default function SLS(props) {
     );
 
     for (let x = 0; x < teams.length; x++) {
-      teams[x] = {...teams[x], matchups: matchupData[x]}
+      teams[x] = { ...teams[x], matchups: matchupData[x] };
     }
 
     setLoading(false);
