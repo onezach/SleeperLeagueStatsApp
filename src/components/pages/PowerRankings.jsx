@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Container, Form, Col, Row } from "react-bootstrap";
 import FormRange from "react-bootstrap/esm/FormRange";
 
+import TableOverflow from "../components/TableOverflow";
+
 export default function PowerRankings(props) {
   const [powerRanks, setPowerRanks] = useState([]);
   const [powerRankSliders, setPowerRankSliders] = useState({
@@ -157,49 +159,32 @@ export default function PowerRankings(props) {
         {buildVisualization()}
       </div>
       <h2>Data</h2>
-      <div
-        style={{
-          width: "100%",
-          overflowX: "auto",
-          WebkitOverflowScrolling: "touch",
-        }}
-      >
-        <table
-          style={{
-            minWidth: "1000px",
-            borderCollapse: "collapse",
-            border: "1px solid black",
-          }}
-        >
-          <thead>
-            <tr>
-              <th>Team</th>
-              <th>Four Week Average</th>
-              <th>Max Points For</th>
-              <th>Record</th>
-              <th>Efficiency</th>
-            </tr>
-          </thead>
-          <tbody>
-            {powerRankData.data.map((team) => (
-              <tr key={team.name}>
-                <td>{team.name}</td>
-                <td>{team.four_week_avg}</td>
-                <td>{team.max_points_for}</td>
-                <td>
-                  {team.wins +
-                    "-" +
-                    team.losses +
-                    " (" +
-                    (100 * team.win_pct).toFixed(0) +
-                    "%)"}
-                </td>
-                <td>{(100 * team.efficiency).toFixed(2) + "%"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <TableOverflow
+        headers={[
+          "Team",
+          "Four Week Average",
+          "Max Points For",
+          "Record",
+          "Efficiency",
+        ]}
+        data={powerRankData.data.map((team) => {
+          return [
+            team.name,
+            team.four_week_avg,
+            team.max_points_for,
+            <div>
+              {team.wins +
+                "-" +
+                team.losses +
+                " (" +
+                (100 * team.win_pct).toFixed(0) +
+                "%)"}
+            </div>,
+            <div>{(100 * team.efficiency).toFixed(2) + "%"}</div>,
+          ];
+        })}
+        min_width="1000px"
+      />
     </Container>
   );
 }
