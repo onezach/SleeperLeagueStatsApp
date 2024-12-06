@@ -155,6 +155,19 @@ export default function PowerRankings(props) {
         </Form.Group>
       </Form>
       <div>
+        <p>
+          <b>Four-Week Average:</b> Average points scored over the last 4 weeks
+        </p>
+        <p>
+          <b>Max Points-For:</b> The total points a team would have scored had
+          they started their optimal lineup every week
+        </p>
+        <p>
+          <b>Efficiency:</b> The team's points-for divided by their max
+          points-for across the season
+        </p>
+      </div>
+      <div>
         <h2>Rankings</h2>
         {buildVisualization()}
       </div>
