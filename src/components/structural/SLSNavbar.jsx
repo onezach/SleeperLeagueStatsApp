@@ -26,6 +26,7 @@ export default function SLSNavbar(props) {
                 as={Link}
                 to={`/teams/${team.name}`}
               >
+                <img alt="Team Logo" src={team.avatar} width="20" height="20" />{" "}
                 {team.name}
               </Dropdown.Item>
             );

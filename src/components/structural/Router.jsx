@@ -81,7 +81,7 @@ export default function Router() {
               <Route
                 key={team.name}
                 path={`/teams/${team.name}`}
-                element={<Team data={data.teams[tidx]} />}
+                element={<Team data={data.teams[tidx]} idx={tidx} />}
               />
             );
           })}

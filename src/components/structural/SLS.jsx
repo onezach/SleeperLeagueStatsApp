@@ -178,7 +178,7 @@ export default function SLS(props) {
       teams.push({
         avatar: usersByID[rosters[i].owner_id].metadata.avatar
           ? usersByID[rosters[i].owner_id].metadata.avatar
-          : "https://sleepercdn.com/avatars/thumbs/" +
+          : "https://sleepercdn.com/avatars/" +
             usersByID[rosters[i].owner_id].avatar,
         name: name,
         points_for: points_for,
@@ -187,6 +187,7 @@ export default function SLS(props) {
         losses: rosters[i].settings.losses,
         efficiency: points_for / max_points_for,
         win_pct: rosters[i].settings.wins / leagueData.settings.last_scored_leg,
+        last_scored_week: leagueData.settings.last_scored_leg,
       });
     }
 
