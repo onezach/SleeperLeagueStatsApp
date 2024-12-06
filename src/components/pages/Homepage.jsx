@@ -3,7 +3,9 @@ import TableOverflow from "../components/TableOverflow";
 export default function Homepage(props) {
   return (
     <div style={{ flexDirection: "column", margin: "1rem" }}>
-      <h1>Standings</h1>
+      <h1>{props.data.name + " (" + props.data.season + ")"}</h1>
+      <p>{props.data.total_rosters} teams, {props.data.scoring_settings.rec} PPR</p>
+      <h2>Current Standings</h2>
       <TableOverflow
         headers={["Rank", "Team", "Record", "Points For", "Max Points For"]}
         data={props.standings.map((team, rank) => {

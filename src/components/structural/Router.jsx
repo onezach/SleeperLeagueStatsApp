@@ -69,6 +69,7 @@ export default function Router() {
                     return t2.wins - t1.wins;
                   }
                 })}
+                data={data.league}
               />
             }
           />
